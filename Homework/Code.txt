@@ -1,0 +1,34 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from sklearn.cluster import KMeans
+
+# Assuming you have already normalized your data in normalized_df
+
+def classify(normalized_df):
+    # Perform KMeans clustering with 3 clusters
+    kmeans = KMeans(n_clusters=3, random_state=42)
+    normalized_df['class'] = kmeans.fit_predict(normalized_df[['density', 'pH', 'alcohol']])
+
+    return normalized_df
+
+# Call the classify function on your normalized data
+normalized_df = classify(normalized_df)
+
+# Create a 3D scatter plot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Scatter plot each class with a different color
+for label, color in zip(range(3), ['r', 'g', 'b']):
+    class_data = normalized_df[normalized_df['class'] == label]
+    ax.scatter(class_data['density'], class_data['pH'], class_data['alcohol'], c=color, label=f'Class {label}')
+
+# Set labels and legend
+ax.set_xlabel('Density')
+ax.set_ylabel('pH')
+ax.set_zlabel('Alcohol')
+ax.legend()
+
+# Show the plot
+plt.show()
